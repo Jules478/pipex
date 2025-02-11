@@ -129,7 +129,7 @@ echo -e "${PURPLE}
 ${RESET}"
 echo -e "${PURPLE}
 Relative Path
-
+ ! Change path of <cmd1> for valid test !
 ${RESET}"
 valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "../push_swap/./push_swap '5 3 2 1 4'" "wc -l" julestestoutfile
 if [ ! -s julestestoutfile ]; then
@@ -142,7 +142,7 @@ echo -e "${PURPLE}
 ${RESET}"
 echo -e "${PURPLE}
 Absolute Path
-
+ ! Change path of <cmd1> for valid test !
 ${RESET}"
 valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "/home/mpierce/Desktop/MainWork/push_swap/./push_swap 5 3 2 1 4" "wc -l" julestestoutfile
 if [ ! -s julestestoutfile ]; then
