@@ -1,14 +1,14 @@
 GREEN='\e[1;32m'
 PURPLE='\e[1;35m'
+RED='\e[1;31m'
 RESET='\033[0m'
 
 make fclean
-make
+make bonus
 make clean
 clear
 echo -e "test\ntest\ntest\ntest\ngood\ngood\ngood\n\ntest\n" > julestestinfile
 touch julestestoutfile
-
 
 echo -e "${PURPLE}
 Valid Input
@@ -95,6 +95,20 @@ echo -e "${PURPLE}
 ----------------------------------------
 ${RESET}"
 echo -e "${PURPLE}
+Multiple Commands
+
+${RESET}"
+valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "grep e" "wc -l" "wc -w" julestestoutfile
+echo 1 > julestestfile
+if diff julestestoutfile julestestfile > /dev/null; then
+    echo -e "${GREEN}\nOutput Correct\n${RESET}"
+else
+    echo -e "${RED}\nOutput Incorrect\n${RESET}"
+fi
+echo -e "${PURPLE}
+----------------------------------------
+${RESET}"
+echo -e "${PURPLE}
 Infile Permissions Removed
 
 ${RESET}"
@@ -149,6 +163,7 @@ if [ ! -s julestestoutfile ]; then
     echo -e "${RED}\nOutput Incorrect\n${RESET}"
 else
     echo -e "${GREEN}\nOutput Correct\n${RESET}"
+
 fi
 echo -e "${PURPLE}
 ----------------------------------------
@@ -169,12 +184,16 @@ echo -e "${PURPLE}
 ----------------------------------------
 ${RESET}"
 echo -e "${PURPLE}
-Excessive Commands
-
+Sleep Test
 ${RESET}"
 echo -n > julestestoutfile
 echo -n > julestestfile
-valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "grep a" "wc -w" "wc -l" julestestoutfile
+while true; do
+    echo -ne "${PURPLE}$(date +"%T")\r${RESET}"
+    sleep 1
+done &
+valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "sleep 10" "sleep 10" "sleep 10" "sleep 10" "sleep 10" "sleep 10" "sleep 10" "sleep 10" "sleep 10" julestestoutfile
+kill $!
 if diff julestestoutfile julestestfile > /dev/null; then
     echo -e "${GREEN}\nOutput Correct\n${RESET}"
 else
@@ -184,16 +203,12 @@ echo -e "${PURPLE}
 ----------------------------------------
 ${RESET}"
 echo -e "${PURPLE}
-Sleep Test
+here_doc
+
+For expected output pass this input: a b c d e f EOF
 ${RESET}"
-echo -n > julestestoutfile
-echo -n > julestestfile
-while true; do
-    echo -ne "${PURPLE}$(date +"%T")\r${RESET}"
-    sleep 1
-done &
-valgrind --leak-check=full --track-fds=yes ./pipex julestestinfile "sleep 10" "sleep 10" julestestoutfile
-kill $!
+valgrind --leak-check=full --track-fds=yes ./pipex here_doc EOF "grep e" "wc -l" julestestoutfile
+echo 1 > julestestfile
 if diff julestestoutfile julestestfile > /dev/null; then
     echo -e "${GREEN}\nOutput Correct\n${RESET}"
 else

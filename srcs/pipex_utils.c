@@ -6,7 +6,7 @@
 /*   By: mpierce <mpierce@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 12:06:11 by mpierce           #+#    #+#             */
-/*   Updated: 2025/02/06 13:08:35 by mpierce          ###   ########.fr       */
+/*   Updated: 2025/02/11 16:13:50 by mpierce          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,24 @@ void	free_all(t_pipex *pipex)
 	free(pipex->argv);
 }
 
-void	error_ret(t_pipex *pipex, char *name)
+void	error_ret(t_pipex *pipex, char *name, int ex_code)
 {
 	perror(name);
+	close_fd(pipex);
 	free(pipex->argv);
 	if (pipex->full_cmd)
 		free_array(&pipex->full_cmd);
-	if (!access(".temp", F_OK))
-		unlink(".temp");
-	exit(EXIT_FAILURE);
+	exit(ex_code);
 }
 
-void	error_ret_noerrno(t_pipex *pipex, char *name)
+void	error_ret_noerrno(t_pipex *pipex, char *name, int ex_code)
 {
 	write(2, name, ft_strlen(name));
+	close_fd(pipex);
 	free(pipex->argv);
 	if (pipex->full_cmd)
 		free_array(&pipex->full_cmd);
-	exit(EXIT_FAILURE);
+	exit(ex_code);
 }
 
 void	assign_to_struct(t_pipex *pipex, int argc, char **argv, char **envp)
@@ -54,7 +54,7 @@ void	assign_to_struct(t_pipex *pipex, int argc, char **argv, char **envp)
 	pipex->full_cmd = NULL;
 	pipex->argv = malloc (argc * sizeof(char *));
 	if (!pipex->argv)
-		error_ret(pipex, "Pipex malloc failure\n");
+		error_ret_noerrno(pipex, "Pipex malloc failure\n", EXIT_FAILURE);
 	while (argv[i])
 	{
 		pipex->argv[i - 1] = argv[i];

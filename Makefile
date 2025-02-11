@@ -6,7 +6,7 @@
 #    By: mpierce <mpierce@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/16 11:48:41 by mpierce           #+#    #+#              #
-#    Updated: 2025/01/31 12:30:12 by mpierce          ###   ########.fr        #
+#    Updated: 2025/02/11 15:07:02 by mpierce          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,19 +18,29 @@ CFLAGS = -Wall -Wextra -Werror -g
 
 RM = rm -rf
 
-SOURCES = \
-			srcs/pipex.c \
+CSRCS = \
 			srcs/pipex_utils.c \
-			srcs/piping.c \
 			srcs/piping_utils.c \
-			srcs/handle_files.c \
-			srcs/handle_heredoc.c
+			srcs/handle_files.c
+
+MSRCS = \
+			srcs/pipex.c \
+			srcs/piping.c
+
+BSRCS = \
+			bonus/pipex_bonus.c \
+			bonus/handle_heredoc.c \
+			bonus/piping_bonus.c
 
 LIBFT_PATH = ./libftmaster
 
 LIBFT = $(LIBFT_PATH)/libft.a
 
-OBJECTS = $(SOURCES:.c=.o)
+COBJS = $(CSRCS:.c=.o)
+
+MOBJS = $(MSRCS:.c=.o)
+
+BOBJS = $(BSRCS:.c=.o)
 
 GREEN = \e[1;32m
 PURPLE = \e[1;35m
@@ -38,8 +48,8 @@ RESET = \033[0m
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) -o $(NAME)
+$(NAME): $(COBJS) $(MOBJS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(COBJS) $(MOBJS) $(LIBFT) -o $(NAME)
 	@echo "$(GREEN) \npipex Compiled\n$(RESET)"
 	@echo "$(PURPLE)------------------------------------$(RESET)"
 
@@ -50,9 +60,9 @@ $(LIBFT):
 	@$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
 
 clean:
-	@$(RM) $(OBJECTS)
+	@$(RM) $(COBJS) $(MOBJS) $(BOBJS)
 	@make -C $(LIBFT_PATH) clean --no-print-directory
-	@echo "$(GREEN)\nObjects Cleaned\n$(RESET)"
+	@echo "$(GREEN)\nOBJS Cleaned\n$(RESET)"
 	@echo "$(PURPLE)------------------------------------$(RESET)"
 
 fclean: clean
@@ -63,12 +73,19 @@ fclean: clean
 
 re: fclean all
 
+bonus: $(COBJS) $(BOBJS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(COBJS) $(BOBJS) $(LIBFT) -o $(NAME)
+	@echo "$(GREEN) \npipex Bonus Compiled\n$(RESET)"
+	@echo "$(PURPLE)------------------------------------$(RESET)"
+	@$(RM) $(COBJS) $(MOBJS) $(BOBJS)
+	@make -C $(LIBFT_PATH) clean --no-print-directory
+
 full: fclean all
-	@$(RM) $(OBJECTS)
-	@echo "$(GREEN)\nObjects Cleaned\n$(RESET)"
+	@$(RM) $(COBJS) $(MOBJS) $(BOBJS)
+	@echo "$(GREEN)\nOBJS Cleaned\n$(RESET)"
 	@echo "$(PURPLE)------------------------------------$(RESET)"
 	@make -C $(LIBFT_PATH) clean --no-print-directory
 
 good: all clean
 
-.PHONY: all clean fclean re libft full good
+.PHONY: all clean fclean re libft full good bonus

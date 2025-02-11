@@ -6,7 +6,7 @@
 /*   By: mpierce <mpierce@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:50:29 by mpierce           #+#    #+#             */
-/*   Updated: 2024/12/06 16:37:07 by mpierce          ###   ########.fr       */
+/*   Updated: 2025/02/10 17:41:41 by mpierce          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,11 @@ char	*get_next_line(int fd)
 	static char	*buffer[OPEN_MAX];
 	char		*nextline;
 
+	if (fd == -42)
+	{
+		free(buffer[0]);
+		return (NULL);
+	}
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
 		return (NULL);
 	buffer[fd] = read_file(fd, buffer[fd]);
